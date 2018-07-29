@@ -1,5 +1,6 @@
 #include <vector>
 #include <array>
+#include <cassert>
 
 #include "QMX/qmx.hpp"
 
