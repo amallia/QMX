@@ -12,8 +12,7 @@
 */
 #pragma once
 
-#include <stdint.h>
-#include "compress_integer.h"
+#include <cstdint>
 
 namespace JASS
 	{
@@ -26,21 +25,21 @@ namespace JASS
 		@details  Trotman & Lin  describe several improvements to the QMX codex in:
 
 		A. Trotman, J. Lin (2016), In Vacuo and In Situ Evaluation of SIMD Codecs, Proceedings of The 21st Australasian Document Computing Symposium (ADCS 2016
-		
+
 		including removal of the vbyte encoded length from the end of the encoded sequence.  This version of QMX is the original QMX with that improvement added,
 		but none of the other imprivements suggested by Trotman & Lin.  This makes the encoded sequence smaller, and faster to decode, than any of the other
 		alrernatives suggested.  It does not include the code to prevent read and write overruns from the encoded string and into the decode buffer.  To account
 		for overwrites make sure the decode-into buffer is at least 256 integers larger than required.  To prevent over-reads from the encoded string make sure
 		that that string is at least 16 bytes longer than needed.
-		
-		At the request of Matthias Petri (University of Melbourne), the code no longer requires SIMD-word alignment to decode (the read and write 
+
+		At the request of Matthias Petri (University of Melbourne), the code no longer requires SIMD-word alignment to decode (the read and write
 		instructions have been changed from aligned to unaligned since Intel made them faster).
-		
+
 		For details on the original QMX encoding see:
-		
+
 		A. Trotman (2014), Compression, SIMD, and Postings Lists, Proceedings of the 19th Australasian Document Computing Symposium (ADCS 2014)
 	*/
-	class compress_integer_qmx_improved : public compress_integer
+	class compress_integer_qmx_improved
 		{
 		private:
 			uint8_t *length_buffer;					///< Stores the number of bits needed to compress each integer
@@ -63,6 +62,8 @@ namespace JASS
 			void write_out(uint8_t **buffer, uint32_t *source, uint32_t raw_count, uint32_t size_in_bits, uint8_t **length_buffer);
 
 		public:
+			typedef uint32_t integer;									///< This class and descendants will work on integers of this size.  Do not change without also changing JASS_COMPRESS_INTEGER_BITS_PER_INTEGER
+
 			/*
 				COMPRESS_INTEGER_QMX_IMPROVED::COMPRESS_INTEGER_QMX_IMPROVED()
 				--------------------------------------------------------------
@@ -77,7 +78,7 @@ namespace JASS
 				{
 				/* Nothing */
 				}
-				
+
 			/*
 				COMPRESS_INTEGER_QMX_IMPROVED::~COMPRESS_INTEGER_QMX_IMPROVED()
 				---------------------------------------------------------------
@@ -117,25 +118,6 @@ namespace JASS
 				@param source_length [in] The length (in bytes) of the source buffer.
 			*/
 			virtual void decode(integer *decoded, size_t integers_to_decode, const void *source, size_t source_length);
-
-			/*
-				COMPRESS_INTEGER_QMX_IMPROVED::UNITTEST_ONE()
-				---------------------------------------------
-			*/
-			/*!
-				@brief Test one sequence to make sure it encodes and decodes to the same thing.  Assert if not.
-				@param sequence [in] the sequernce to encode.
-			*/
-			static void unittest_one(const std::vector<uint32_t> &sequence);
-
-			/*
-				COMPRESS_INTEGER_QMX_IMPROVED::UNITTEST()
-				-----------------------------------------
-			*/
-			/*!
-				@brief Unit test this class
-			*/
-			static void unittest(void);
 		};
 	}
 
