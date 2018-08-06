@@ -5,7 +5,7 @@
 #include "QMX/qmx.hpp"
 
 
-using namespace JASS;
+using namespace QMX;
 
 void unittest_one(
     const std::vector<uint32_t> &sequence) {
