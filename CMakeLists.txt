@@ -25,8 +25,10 @@ else ()
 endif()
 
 include_directories(include)
-add_library(QMX STATIC include/QMX/qmx.cpp
-                            include/QMX/qmx.hpp
-                            )
+add_library(QMX STATIC src/qmx.cpp)
+target_include_directories(cxxopts INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+
 enable_testing()
 add_subdirectory(test)
