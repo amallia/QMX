@@ -14,7 +14,7 @@
 
 #include <cstdint>
 
-namespace JASS
+namespace QMX
 	{
 	/*
 		CLASS COMPRESS_INTEGER_QMX_IMPROVED
