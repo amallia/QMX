@@ -26,7 +26,7 @@ endif()
 
 include_directories(include)
 add_library(QMX STATIC src/qmx.cpp)
-target_include_directories(cxxopts INTERFACE
+target_include_directories(QMX INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
