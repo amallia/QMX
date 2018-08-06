@@ -44,7 +44,7 @@
 #include <emmintrin.h>
 #include <smmintrin.h>
 
-#include "qmx.hpp"
+#include "QMX/qmx.hpp"
 
 //#define MAKE_DECOMPRESS 1		/* uncomment this and it will create a program that writes the decompressor */
 
@@ -698,7 +698,7 @@ namespace QMX
 	*/
 	int main(void)
 		{
-		printf("namespace JASS\n");
+		printf("namespace QMX\n");
 		printf("\t{\n");
 		printf("\talignas(16) static uint32_t static_mask_21[]  = {0x1fffff, 0x1fffff, 0x1fffff, 0x1fffff};\n");
 		printf("\talignas(16) static uint32_t static_mask_12[]  = {0xfff, 0xfff, 0xfff, 0xfff};\n");
