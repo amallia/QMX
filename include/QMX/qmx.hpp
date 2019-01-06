@@ -13,41 +13,40 @@
 */
 #pragma once
 
-#include <cstdint>
 #include <array>
-#include <vector>
+#include <cstdint>
 #include <iostream>
+#include <vector>
 
+#include <emmintrin.h>
+#include <smmintrin.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <emmintrin.h>
-#include <smmintrin.h>
-
 
 namespace QMX {
-	alignas(16) static uint32_t static_mask_21[] = {
-      0x1fffff, 0x1fffff, 0x1fffff, 0x1fffff}; ///< AND mask for 21-bit integers
-  alignas(16) static uint32_t static_mask_12[] = {
-      0xfff, 0xfff, 0xfff, 0xfff}; ///< AND mask for 12-bit integers
-  alignas(16) static uint32_t static_mask_10[] = {
-      0x3ff, 0x3ff, 0x3ff, 0x3ff}; ///< AND mask for 10-bit integers
-  alignas(16) static uint32_t static_mask_9[] = {
-      0x1ff, 0x1ff, 0x1ff, 0x1ff}; ///< AND mask for 9-bit integers
-  alignas(16) static uint32_t static_mask_7[] = {
-      0x7f, 0x7f, 0x7f, 0x7f}; ///< AND mask for 7-bit integers
-  alignas(16) static uint32_t static_mask_6[] = {
-      0x3f, 0x3f, 0x3f, 0x3f}; ///< AND mask for 6-bit integers
-  alignas(16) static uint32_t static_mask_5[] = {
-      0x1f, 0x1f, 0x1f, 0x1f}; ///< AND mask for 5-bit integers
-  alignas(16) static uint32_t static_mask_4[] = {
-      0x0f, 0x0f, 0x0f, 0x0f}; ///< AND mask for 4-bit integers
-  alignas(16) static uint32_t static_mask_3[] = {
-      0x07, 0x07, 0x07, 0x07}; ///< AND mask for 3-bit integers
-  alignas(16) static uint32_t static_mask_2[] = {
-      0x03, 0x03, 0x03, 0x03}; ///< AND mask for 2-bit integers
-  alignas(16) static uint32_t static_mask_1[] = {
-      0x01, 0x01, 0x01, 0x01}; ///< AND mask for 1-bit integers
+alignas(16) static uint32_t static_mask_21[] = {
+    0x1fffff, 0x1fffff, 0x1fffff, 0x1fffff}; ///< AND mask for 21-bit integers
+alignas(16) static uint32_t static_mask_12[] = {
+    0xfff, 0xfff, 0xfff, 0xfff}; ///< AND mask for 12-bit integers
+alignas(16) static uint32_t static_mask_10[] = {
+    0x3ff, 0x3ff, 0x3ff, 0x3ff}; ///< AND mask for 10-bit integers
+alignas(16) static uint32_t static_mask_9[] = {
+    0x1ff, 0x1ff, 0x1ff, 0x1ff}; ///< AND mask for 9-bit integers
+alignas(16) static uint32_t static_mask_7[] = {
+    0x7f, 0x7f, 0x7f, 0x7f}; ///< AND mask for 7-bit integers
+alignas(16) static uint32_t static_mask_6[] = {
+    0x3f, 0x3f, 0x3f, 0x3f}; ///< AND mask for 6-bit integers
+alignas(16) static uint32_t static_mask_5[] = {
+    0x1f, 0x1f, 0x1f, 0x1f}; ///< AND mask for 5-bit integers
+alignas(16) static uint32_t static_mask_4[] = {
+    0x0f, 0x0f, 0x0f, 0x0f}; ///< AND mask for 4-bit integers
+alignas(16) static uint32_t static_mask_3[] = {
+    0x07, 0x07, 0x07, 0x07}; ///< AND mask for 3-bit integers
+alignas(16) static uint32_t static_mask_2[] = {
+    0x03, 0x03, 0x03, 0x03}; ///< AND mask for 2-bit integers
+alignas(16) static uint32_t static_mask_1[] = {
+    0x01, 0x01, 0x01, 0x01}; ///< AND mask for 1-bit integers
 
 /*
         CLASS COMPRESS_INTEGER_QMX_IMPROVED
@@ -156,7 +155,6 @@ static const type_and_integers table[] = {
     {0, 0},   {0, 0},   {0, 0}, {0, 0},  {14, 4}, // size_in_bits == 32;
 };
 
-
 /*
         MAXIMUM()
         ---------
@@ -203,212 +201,211 @@ private:
         ------------------------------------------
         write a sequence into the destination buffer
 */
-void write_out(uint8_t **buffer,
-                                              uint32_t *source,
-                                              uint32_t raw_count,
-                                              uint32_t size_in_bits,
-                                              uint8_t **length_buffer) {
-  uint32_t current;
-  uint8_t *destination = *buffer;
-  uint8_t *key_store = *length_buffer;
-  uint32_t sequence_buffer[4];
-  uint32_t instance, value;
-  uint8_t type;
-  uint32_t count;
+  void write_out(uint8_t **buffer, uint32_t *source, uint32_t raw_count,
+                 uint32_t size_in_bits, uint8_t **length_buffer) {
+    uint32_t current;
+    uint8_t *destination = *buffer;
+    uint8_t *key_store = *length_buffer;
+    uint32_t sequence_buffer[4];
+    uint32_t instance, value;
+    uint8_t type;
+    uint32_t count;
 
-  if (size_in_bits > 32)
-    exit(printf("Can't compress into integers of size %d bits\n",
-                (int)size_in_bits)); // LCOV_EXCL_LINE
-  type = table[size_in_bits].type;
-  count = (raw_count + table[size_in_bits].integers - 1) /
-          table[size_in_bits].integers;
+    if (size_in_bits > 32)
+      exit(printf("Can't compress into integers of size %d bits\n",
+                  (int)size_in_bits)); // LCOV_EXCL_LINE
+    type = table[size_in_bits].type;
+    count = (raw_count + table[size_in_bits].integers - 1) /
+            table[size_in_bits].integers;
 
-  uint32_t *end = source + raw_count;
+    uint32_t *end = source + raw_count;
 
-  while (count > 0) {
-    uint32_t batch = count > 16 ? 16 : count;
-    *key_store++ = (type << 4) | (~(batch - 1) & 0x0F);
+    while (count > 0) {
+      uint32_t batch = count > 16 ? 16 : count;
+      *key_store++ = (type << 4) | (~(batch - 1) & 0x0F);
 
-    count -= batch;
+      count -= batch;
 
-    /*
-            0-pad if there aren't enough integers in the source buffer.
-    */
-    if (source + table[size_in_bits].integers * batch >
-        end) { // must 0-pad to prevent read overflow in input buffer
-      auto new_end = full_length_buffer + (end - source);
-      std::fill(new_end, new_end + table[size_in_bits].integers, 0);
-      std::copy(source, end, full_length_buffer);
-      end = new_end;
-      source = full_length_buffer;
-    }
+      /*
+              0-pad if there aren't enough integers in the source buffer.
+      */
+      if (source + table[size_in_bits].integers * batch >
+          end) { // must 0-pad to prevent read overflow in input buffer
+        auto new_end = full_length_buffer + (end - source);
+        std::fill(new_end, new_end + table[size_in_bits].integers, 0);
+        std::copy(source, end, full_length_buffer);
+        end = new_end;
+        source = full_length_buffer;
+      }
 
-    for (current = 0; current < batch; current++) {
-      switch (size_in_bits) {
-      case 0: // 0 bits per integer (i.e. a long sequence of zeros)
-        /*
-                In this case we don't need to store a 4 byte integer because its
-           implicit
-        */
-        source += 256;
-        break;
-      case 1: // 1 bit per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 128; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 1);
+      for (current = 0; current < batch; current++) {
+        switch (size_in_bits) {
+        case 0: // 0 bits per integer (i.e. a long sequence of zeros)
+          /*
+                  In this case we don't need to store a 4 byte integer because
+             its implicit
+          */
+          source += 256;
+          break;
+        case 1: // 1 bit per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 128; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 1);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 128;
-        break;
-      case 2: // 2 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 64; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 2);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 128;
+          break;
+        case 2: // 2 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 64; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 2);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 64;
-        break;
-      case 3: // 3 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 40; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 3);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 64;
+          break;
+        case 3: // 3 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 40; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 3);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 40;
-        break;
-      case 4: // 4 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 32; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 4);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 40;
+          break;
+        case 4: // 4 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 32; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 4);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 32;
-        break;
-      case 5: // 5 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 24; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 5);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 32;
+          break;
+        case 5: // 5 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 24; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 5);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 24;
-        break;
-      case 6: // 6 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 20; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 6);
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 20;
-        break;
-      case 7: // 7 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 20; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 7);
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 24;
+          break;
+        case 6: // 6 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 20; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 6);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 20;
+          break;
+        case 7: // 7 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 20; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 7);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
 
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 16; value < 20; value++)
-          sequence_buffer[value & 0x03] |= source[value] >> 4;
-        for (value = 20; value < 36; value++)
-          sequence_buffer[value & 0x03] |= source[value]
-                                           << (((value - 20) / 4) * 7 + 3);
-        memcpy(destination, sequence_buffer, 16);
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 16; value < 20; value++)
+            sequence_buffer[value & 0x03] |= source[value] >> 4;
+          for (value = 20; value < 36; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << (((value - 20) / 4) * 7 + 3);
+          memcpy(destination, sequence_buffer, 16);
 
-        destination += 16;
-        source += 36; // 36 in a double 128-bit word
-        break;
-      case 8: // 8 bits per integer
-        for (instance = 0; instance < 16 && source < end; instance++)
-          *destination++ = (uint8_t)*source++;
-        break;
-      case 9: // 9 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 16; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 9);
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
+          destination += 16;
+          source += 36; // 36 in a double 128-bit word
+          break;
+        case 8: // 8 bits per integer
+          for (instance = 0; instance < 16 && source < end; instance++)
+            *destination++ = (uint8_t)*source++;
+          break;
+        case 9: // 9 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 16; value++)
+            sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 9);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
 
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 12; value < 16; value++)
-          sequence_buffer[value & 0x03] |= source[value] >> 5;
-        for (value = 16; value < 28; value++)
-          sequence_buffer[value & 0x03] |= source[value]
-                                           << (((value - 16) / 4) * 9 + 4);
-        memcpy(destination, sequence_buffer, 16);
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 12; value < 16; value++)
+            sequence_buffer[value & 0x03] |= source[value] >> 5;
+          for (value = 16; value < 28; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << (((value - 16) / 4) * 9 + 4);
+          memcpy(destination, sequence_buffer, 16);
 
-        destination += 16;
-        source += 28; // 28 in a double 128-bit word
-        break;
-      case 10: // 10 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 12; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 10);
+          destination += 16;
+          source += 28; // 28 in a double 128-bit word
+          break;
+        case 10: // 10 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 12; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << ((value / 4) * 10);
 
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-        source += 12;
-        break;
-      case 12: // 12 bit integers
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 12; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 12);
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+          source += 12;
+          break;
+        case 12: // 12 bit integers
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 12; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << ((value / 4) * 12);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
 
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 8; value < 12; value++)
-          sequence_buffer[value & 0x03] |= source[value] >> 8;
-        for (value = 12; value < 20; value++)
-          sequence_buffer[value & 0x03] |= source[value]
-                                           << (((value - 12) / 4) * 12 + 8);
-        memcpy(destination, sequence_buffer, 16);
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 8; value < 12; value++)
+            sequence_buffer[value & 0x03] |= source[value] >> 8;
+          for (value = 12; value < 20; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << (((value - 12) / 4) * 12 + 8);
+          memcpy(destination, sequence_buffer, 16);
 
-        destination += 16;
-        source += 20; // 20 in a double 128-bit word
-        break;
-      case 16: // 16 bits per integer
-        for (instance = 0; instance < 8 && source < end; instance++) {
-          *reinterpret_cast<uint16_t *>(destination) = (uint16_t)*source++;
-          destination += 2;
+          destination += 16;
+          source += 20; // 20 in a double 128-bit word
+          break;
+        case 16: // 16 bits per integer
+          for (instance = 0; instance < 8 && source < end; instance++) {
+            *reinterpret_cast<uint16_t *>(destination) = (uint16_t)*source++;
+            destination += 2;
+          }
+          break;
+        case 21: // 21 bits per integer
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 0; value < 8; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << ((value / 4) * 21);
+          memcpy(destination, sequence_buffer, 16);
+          destination += 16;
+
+          memset(sequence_buffer, 0, sizeof(sequence_buffer));
+          for (value = 4; value < 8; value++)
+            sequence_buffer[value & 0x03] |= source[value] >> 11;
+          for (value = 8; value < 12; value++)
+            sequence_buffer[value & 0x03] |= source[value]
+                                             << (((value - 8) / 4) * 21 + 11);
+          memcpy(destination, sequence_buffer, 16);
+
+          destination += 16;
+          source += 12; // 12 in a double 128-bit word
+          break;
+        case 32: // 32 bits per integer
+          for (instance = 0; instance < 4 && source < end; instance++) {
+            *reinterpret_cast<uint32_t *>(destination) = (uint32_t)*source++;
+            destination += 4;
+          }
+          break;
         }
-        break;
-      case 21: // 21 bits per integer
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 0; value < 8; value++)
-          sequence_buffer[value & 0x03] |= source[value] << ((value / 4) * 21);
-        memcpy(destination, sequence_buffer, 16);
-        destination += 16;
-
-        memset(sequence_buffer, 0, sizeof(sequence_buffer));
-        for (value = 4; value < 8; value++)
-          sequence_buffer[value & 0x03] |= source[value] >> 11;
-        for (value = 8; value < 12; value++)
-          sequence_buffer[value & 0x03] |= source[value]
-                                           << (((value - 8) / 4) * 21 + 11);
-        memcpy(destination, sequence_buffer, 16);
-
-        destination += 16;
-        source += 12; // 12 in a double 128-bit word
-        break;
-      case 32: // 32 bits per integer
-        for (instance = 0; instance < 4 && source < end; instance++) {
-          *reinterpret_cast<uint32_t *>(destination) = (uint32_t)*source++;
-          destination += 4;
-        }
-        break;
       }
     }
+    *buffer = destination;
+    *length_buffer = key_store;
   }
-  *buffer = destination;
-  *length_buffer = key_store;
-}
-
 
 public:
   typedef uint32_t integer; ///< This class and descendants will work on
